@@ -1,0 +1,88 @@
+version: "3.5"
+
+networks:
+    it-network:
+
+services:
+
+    sitio:
+        image: apidocker:0.1
+        build:
+            context: "docker/"
+            dockerfile: Dockerfile
+        container_name: api
+        environment:
+            POSTGRES_PASSWORD: '${DB_PASS}'
+            POSTGRES_USER: '${DB_USER}'
+            POSTGRES_DB: '${DB_NAME}'
+            POSTGRES_HOST: '${DB_HOST}'
+            POSTGRES_PORT: '${DB_PORT}'
+            APP_KEY: '${LARAVEL_APP_KEY}'
+        volumes:
+            - ./src/sitio:/var/www/html
+            - ./data/sitio/storage:/var/www/html/storage
+        ports:
+            - 8004:80
+            - 443:443
+        networks:
+            - it-network
+
+
+    postgres:
+        image: postgres:9.6
+        restart: unless-stopped
+        tty: true
+        container_name: 'postgres-server96'
+        environment:
+            POSTGRES_PASSWORD: '${DB_PASS}'
+            POSTGRES_USER: '${DB_USER}'
+            POSTGRES_DB: '${DB_NAME}'
+            SERVICE_NAME: postgres
+            SERVICE_TAGS: dev
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        networks:
+            - it-network
+
+    composer:
+        image: composer:latest
+        container_name: it-composer
+        volumes:
+            - ./src/sitio:/var/www/html
+        working_dir: /var/www/html
+        networks:
+            - it-network
+
+    npm:
+        image: node:14.15.3
+        container_name: it-npm
+        volumes:
+            - ./src/sitio:/var/www/html
+        working_dir: /var/www/html
+        entrypoint: ['npm']
+        networks:
+            - it-network
+
+    artisan:
+        image: apidocker:0.1
+        build:
+            context: "docker/"
+            dockerfile: Dockerfile
+        container_name: it-artisan
+        environment:
+            POSTGRES_PASSWORD: '${DB_PASS}'
+            POSTGRES_USER: '${DB_USER}'
+            POSTGRES_DB: '${DB_NAME}'
+            POSTGRES_HOST: '${DB_HOST}'
+            POSTGRES_PORT: '${DB_PORT}'
+            APP_KEY: '${LARAVEL_APP_KEY}'
+        volumes:
+            - ./src/sitio:/var/www/html
+        depends_on:
+            - postgres
+        working_dir: /var/www/html
+        entrypoint: ['/var/www/html/artisan']
+        networks:
+            - it-network
