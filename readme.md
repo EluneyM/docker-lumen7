@@ -32,7 +32,7 @@ Se requiere la instalación de [git](https://git-scm.com/book/en/v2/Getting-Star
 4. Copiar archivo src/.env.example de la carpeta de Laravel
 
     ```
-    cp src/.env.example src/.env
+    cp src/sitio/.env.example src/sitio/.env
     ```
 
 5. Editar las variables de entorno en el archivo de la raíz del proyecto, puedes usar el editor que gustes. Ej: vim
@@ -58,7 +58,12 @@ Se requiere la instalación de [git](https://git-scm.com/book/en/v2/Getting-Star
     ```
     docker-compose up -d --build
     ```
+    
+9. Instalar dependencias
 
+    ```
+    docker-compose run --rm composer install
+    ```
 
 
 ## Uso
