@@ -80,3 +80,20 @@ Se requiere la instalación de [git](https://git-scm.com/book/en/v2/Getting-Star
     ```
     docker-compose up
     ```
+* Ejecutar composer
+
+    ```
+    docker-compose run --rm composer
+    ```
+
+* Ejecutar npm
+
+    ```
+    docker-compose run --rm npm
+    ```
+
+* Ejecutar artisan
+
+    ```
+    docker-compose run --rm artisan
+    ```
